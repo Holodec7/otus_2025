@@ -1,31 +1,36 @@
-
 import json
+import os
 from csv import DictReader
 
-with open ("/Users/gromkott/Desktop/otus_2025/hw_4/books.csv", "r") as f:
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+with open(os.path.join(BASE_DIR, "books.csv"), "r") as f:
     books = list(DictReader(f))
 
-with open("/Users/gromkott/Desktop/otus_2025/hw_4/users.json", "r") as f1:
+with open(os.path.join(BASE_DIR, "users.json"), "r") as f1:
     users = json.load(f1)
 
-books_iter = iter(books)
-num_users = len(users)
-num_books = len(books)
-books_one_user = [num_books//num_users]*num_books
-for i in range(num_books%num_users):
-    books_one_user[i] +=1
+filtered_books = [
+    {
+        "title": book["Title"],
+        "author": book["Author"],
+        "pages": book["Pages"],
+        "genre": book["Genre"]
+    } for book in books
+]
 
-print(books_one_user)
+books_iter = iter(filtered_books)
+
+num_users = len(users)
+num_books = len(filtered_books)
+books_one_user = [num_books // num_users] * num_users
+for i in range(num_books % num_users):
+    books_one_user[i] += 1
 
 for user, count in zip(users, books_one_user):
     user["books"] = [next(books_iter) for _ in range(count)]
 
 with open("result.json", "w") as f:
     json.dump(users, f, indent=4)
-
-
-
-
-
-
 
