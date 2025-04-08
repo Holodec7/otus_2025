@@ -11,12 +11,12 @@ def test_list_breweries(page):
     assert response.status_code == 200, "Expected status code 200"
     new_response = response.json()
     assert len(new_response) == page, f"Expected breweries in the list == {page}"
-    if len(new_response) > 0:
-        for brewery in new_response:
-            assert isinstance(brewery, dict), "Each brewery should be a dictionary"
-            assert len(brewery) == 16, "Each brewery should have 16 params"
-            assert "name" in brewery, "Each brewery should have a name"
-            assert "id" in brewery, "Each brewery should have an id"
+    assert len(new_response) == page
+    for brewery in new_response:
+        assert isinstance(brewery, dict), "Each brewery should be a dictionary"
+        assert len(brewery) == 16, "Each brewery should have 16 params"
+        assert "name" in brewery, "Each brewery should have a name"
+        assert "id" in brewery, "Each brewery should have an id"
 
 
 @pytest.mark.parametrize("city",
@@ -47,11 +47,11 @@ def test_filter_by_country(country):
 
 
 @pytest.mark.parametrize("brewery_id",
-    [
-    "b54b16e1-ac3b-4bff-a11f-f7ae9ddc27e0",
-    "701918b8-49d9-4177-9628-1b6d7d056c06",
-    "1988eb86-f0a2-4674-ba04-02454efa0d31"]
-    )
+                         [
+                             "b54b16e1-ac3b-4bff-a11f-f7ae9ddc27e0",
+                             "701918b8-49d9-4177-9628-1b6d7d056c06",
+                             "1988eb86-f0a2-4674-ba04-02454efa0d31"]
+                         )
 def test_get_brewery_by_id(brewery_id):
     response = requests.get(f'{BASE_URL}/{brewery_id}')
     assert response.status_code == 200, (
@@ -78,8 +78,8 @@ def test_get_brewery_by_id(brewery_id):
     )
     new_response = response.json()
     assert new_response["id"] == brewery_id, (
-            f"Expected brewery ID '{brewery_id}', got '{new_response['id']}'"
-        )
+        f"Expected brewery ID '{brewery_id}', got '{new_response['id']}'"
+    )
     assert "name" in new_response, "Brewery missing 'name' field"
 
 
@@ -87,21 +87,6 @@ def test_get_brewery_by_invalid_id():
     invalid_id = "invalid_abc_id"
     response = requests.get(f'{BASE_URL}/{invalid_id}')
     assert response.status_code == 404, (
-        f"Expected status code 404 for invalid ID '{invalid_id}', got {response.status_code}"
+        f'Expected status code 404 for invalid ID \'{invalid_id}\', got {response.status_code}'
     )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
